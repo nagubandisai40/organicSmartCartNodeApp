@@ -24,5 +24,20 @@ const loginValidation = (data)=>{
     return schema.validate(data)
 }
 
+const productValidation = (data)=>{
+    const schema = new Joi.object({
+        productName: Joi.string().required(),
+        category: Joi.string().required(),
+        description: Joi.string().required(),
+        price: Joi.number().required(),
+        categoryId: Joi.number().required(),
+        categoryName: Joi.string().required(),
+        seller: Joi.string().required(),
+        tags: Joi.string().required()
+    })
+    return schema.validate(data);
+}
+
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation
+module.exports.productValidation = productValidation
