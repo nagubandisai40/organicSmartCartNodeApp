@@ -33,7 +33,8 @@ const productValidation = (data)=>{
         categoryId: Joi.number().required(),
         categoryName: Joi.string().required(),
         seller: Joi.string().required(),
-        tags: Joi.string().required()
+        tags: Joi.string().required(),
+        measuringUnit: Joi.string().required()
     })
     return schema.validate(data);
 }

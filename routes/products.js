@@ -1,17 +1,47 @@
 const express = require('express')
 const router = express.Router()
+const fs = require('fs')
 const verify = require('./validateToken')
-const {productValidation} = require('../validations')
+const {
+    productValidation
+} = require('../validations')
 const Product = require('../models/Product')
+const path = require('path')
 
-router.get("/",verify,(req,res)=>{
-    res.send({message:"Hello You are done with the login"})
-})
 
-router.post('/addProducts', async (req,res)=>{
-    const {error} = productValidation(req.body)
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname+'/productImages'));
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+
+var upload = multer({
+    storage: storage
+});
+
+
+// router.get("/", verify, (req, res) => {
+//     res.send({
+//         message: "Hello You are done with the login"
+//     })
+// })
+
+router.post('/addProducts',upload.single('image'), async (req, res) => {
     
-    if(error){
+    console.log("###################################")
+    console.log(req.file)
+
+    const {
+        error
+    } = productValidation(req.body)
+
+    if (error) {
         return res.status(400).send(error.details[0].message)
     }
 
@@ -23,14 +53,18 @@ router.post('/addProducts', async (req,res)=>{
         categoryId: req.body.categoryId,
         categoryName: req.body.categoryName,
         seller: req.body.seller,
-        tags: req.body.tags
+        tags: req.body.tags,
+        image: '/productImages/'+req.file.originalname,
+        measuringUnit:req.body.measuringUnit
     })
 
-    try{
+    try {
         const savedProduct = await product.save();
         console.log("Product Already Saved")
-        res.status(200).send({productId:savedProduct._id})
-    }catch(err){
+        res.status(200).send({
+            productId: savedProduct._id
+        })
+    } catch (err) {
         res.status(400).send(err)
     }
 })

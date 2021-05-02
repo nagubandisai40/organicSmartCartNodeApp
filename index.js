@@ -1,5 +1,5 @@
 const express = require('express')
-const bodyparser = require('body-parser')
+const bodyParser = require('body-parser')
 const dotenv = require('dotenv')
 var cors = require('cors')
 const path = require('path')
@@ -14,11 +14,13 @@ const paytmRoutes = require('./routes/paytmRoutes')
 
 const PORT = 3000;
 const app = express()
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(cors())
-app.use(bodyparser.json())
 app.use('/api/user',authRoute)
 app.use('/api/products',productsRoute)
 app.use('/api/paytm',paytmRoutes)
+app.use('/productImages',express.static('routes/productImages'))
 
 
 mongoose.connect(process.env.DB_CONNECT,{ useNewUrlParser: true, useUnifiedTopology: true },err=>{
