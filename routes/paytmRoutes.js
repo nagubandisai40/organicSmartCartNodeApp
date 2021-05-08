@@ -14,7 +14,7 @@ const config = require('../paytm/config')
 
 
 router.post('/paynow', [parseUrl, parseJson], (req, res) => {
-    console.log("paynow route invoked")
+    
     if (!req.body.amount || !req.body.email || !req.body.phone) {
         res.status(400).send("Payment Failed")
     } else {

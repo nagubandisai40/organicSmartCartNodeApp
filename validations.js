@@ -24,6 +24,19 @@ const loginValidation = (data)=>{
     return schema.validate(data)
 }
 
+const cartValidation = (data)=>{
+    const schema = new Joi.object({
+        userId: Joi.string().required(),
+        productId: Joi.string().required(),
+        hno: Joi.string().required(),
+        country: Joi.string().required(),
+        state: Joi.string().required(),
+        city: Joi.string().required(),
+        pincode: Joi.string().required(),
+    })
+    return schema.validate(data);
+}
+
 const productValidation = (data)=>{
     const schema = new Joi.object({
         productName: Joi.string().required(),
@@ -42,3 +55,4 @@ const productValidation = (data)=>{
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation
 module.exports.productValidation = productValidation
+module.exports.cartValidation = cartValidation
