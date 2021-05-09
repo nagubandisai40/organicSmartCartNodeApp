@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 const Cart = require('../models/Cart')
 const {cartValidation} = require('../validations')
-const {Address} = require('../models/Address')
+
 
 router.post('/addCart',async (req,res)=>{
     const {error} = cartValidation(req.body)
@@ -15,13 +15,7 @@ router.post('/addCart',async (req,res)=>{
     const cart = new Cart({
         userId: req.body.userId,
         productId: req.body.productId,
-        deliveryAddress: {
-            hno:req.body.hno,
-            country: req.body.country,
-            state: req.body.state,
-            city: req.body.city,
-            pincode: req.body.pincode
-        }
+        
     })
 
     const result = await cart.save();

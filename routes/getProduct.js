@@ -10,8 +10,7 @@ router.get("/getAllProducts",async (req,res)=>{
 
 })
 router.get("/getProductsAccToCategoryId",async (req,res)=>{
-    console.log(req.query.categoryId)
-    console.log("1")
+    
     var x= await product.find({
 
         categoryId:req.query.categoryId

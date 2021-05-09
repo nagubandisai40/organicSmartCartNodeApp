@@ -28,11 +28,8 @@ const cartValidation = (data)=>{
     const schema = new Joi.object({
         userId: Joi.string().required(),
         productId: Joi.string().required(),
-        hno: Joi.string().required(),
-        country: Joi.string().required(),
-        state: Joi.string().required(),
-        city: Joi.string().required(),
-        pincode: Joi.string().required(),
+        
+        
     })
     return schema.validate(data);
 }

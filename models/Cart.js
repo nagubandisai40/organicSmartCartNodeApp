@@ -7,7 +7,7 @@ const Cart = mongoose.Schema({
     userId: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
     productId: {type: mongoose.Schema.Types.ObjectId, ref:'Product'},
     purchasedDate: {type:Date, default: Date.now},
-    deliveryAddress: {type: Address,required:true} 
+    //deliveryAddress: {type: Address,required:true} 
 })
 
 module.exports = mongoose.model('Cart',Cart)
