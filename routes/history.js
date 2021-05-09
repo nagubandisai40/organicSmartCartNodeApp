@@ -20,7 +20,8 @@ router.post('/saveUserHistory',async (req,res)=>{
 
     const result = await hist.save()
 
-    res.status(200).send("Saved to History")
+    res.status(200).send({"data":result._id})
+
 })
 
 router.post('/getHistory',async (req,res)=>{
