@@ -4,6 +4,11 @@ const dotenv = require('dotenv')
 var cors = require('cors')
 const path = require('path')
 
+// childPython.stdout.on('data',(data)=>{
+//     console.log(`stdout:${data}`);
+// })
+
+
 dotenv.config()
 
 const mongoose = require('mongoose')
@@ -37,8 +42,11 @@ mongoose.connect(process.env.DB_CONNECT,{ useNewUrlParser: true, useUnifiedTopol
 })
 
 app.get('/',(req,res)=>{
+    
     res.sendFile(path.join(__dirname+'/index.html'));
 })
+
+
 
 app.listen(PORT,function(){
     console.log("Server running on localhost: "+PORT)

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const history = require('../models/History')
 const {historyValidation} = require('../validations')
-
+const fs = require('fs')
 router.post('/saveUserHistory',async (req,res)=>{
     const {error} = historyValidation(req.body);
 
@@ -26,23 +26,39 @@ router.post('/saveUserHistory',async (req,res)=>{
 
 router.post('/getHistory',async (req,res)=>{
     
-    const arr = []
+    var arr = []
     history.find().populate('userId').populate('productId').exec((err,data)=>{
         if(err){
             res.status(400).send(err)
         }
-        data.forEach((value,index)=>{
+        console.log(data)
+        
+        data.forEach((value)=>{
+            
             if(value.userId._id == req.body.userId)
             {
-                arr.push(value);
+                arr.push(value.productId);
+                //console.log(value.productId)
             }
+            
+           // console.log(value)
         })
+        
+        res.status(200).send({"data":arr})
     })
-
-    res.status(200).send({"data":arr})
-
 })
 
+router.post('/getHistory1',async (req,res)=>{
+    
+    var x= await history.find({
+
+        userId:req.params.userId
+        
+    })
+    
+    res.send({"data":x})
+
+})
 
 
 module.exports = router

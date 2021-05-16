@@ -70,7 +70,7 @@ router.post("/login",async (req,res)=>{
 
     const token = jwt.sign({_id: emailExists._id},process.env.TOKEN_SECRETE)
 
-    res.status(200).send({token:token,_id:emailExists._id,userName:emailExists.userName,email:emailExists.email})
+    res.status(200).send({token:token,_id:emailExists._id,userName:emailExists.userName,email:emailExists.email,phone:emailExists.phone})
 })
 
 module.exports = router
