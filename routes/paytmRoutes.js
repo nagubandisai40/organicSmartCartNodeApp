@@ -14,7 +14,7 @@ const config = require('../paytm/config')
 
 
 router.post('/paynow', [parseUrl, parseJson], (req, res) => {
-    
+
     if (!req.body.amount || !req.body.email || !req.body.phone) {
         res.status(400).send("Payment Failed")
     } else {
@@ -51,9 +51,40 @@ router.post('/paynow', [parseUrl, parseJson], (req, res) => {
 
 })
 
+router.post('/payment', (req, res) => {
+
+    var params = {};
+    params['MID'] = config.PaytmConfig.mid;
+    params['WEBSITE'] = config.PaytmConfig.website;
+    params['CHANNEL_ID'] = 'WEB';
+    params['INDUSTRY_TYPE_ID'] = 'Retail';
+    params['ORDER_ID'] = 'TEST_' + new Date().getTime();
+    params['CUST_ID'] = 'customer_001';
+    params['TXN_AMOUNT'] = req.body.amount.toString();
+    params['CALLBACK_URL'] = 'http://localhost:4200/';
+    params['EMAIL'] = req.body.email;
+    params['MOBILE_NO'] = req.body.phone.toString();
+
+    checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
+        console.log(checksum)
+        var paytmParams={
+            ...params,
+            CHECKSUMHASH:checksum
+        }
+        res.json(paytmParams)
+    });
+
+
+
+})
+
 router.post('/callback', (req, res) => {
+    console.log("@@@@@@@@@@@@@@@@@@@")
+    console.log(req.body)
     var body = '';
     req.on('data', function (data) {
+        console.log("Dataaa..........");
+        console.log(data);
         body += data;
     });
 
@@ -63,7 +94,6 @@ router.post('/callback', (req, res) => {
 
         // received params in callback
         console.log('Callback Response: ', post_data, "\n");
-
 
         // verify the checksum
         var checksumhash = post_data.CHECKSUMHASH;
