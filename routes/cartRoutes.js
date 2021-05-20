@@ -17,7 +17,7 @@ router.post('/addCart',async (req,res)=>{
         productId: req.body.productId,
         
     })
-
+    
     const result = await cart.save();
     res.status(200).send({
         "_id":result._id

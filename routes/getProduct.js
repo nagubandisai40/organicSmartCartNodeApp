@@ -52,7 +52,7 @@ router.post("/getRecommendedProducts", async (req, res) => {
     })
     console.log("##########################")
     console.log(temp)
-    res.status(200).send(JSON.parse(temp.data.recommendedProducts))
+    res.status(200).send({"data":JSON.parse(JSON.stringify(temp.data.recommendedProducts))})
 
     
 
