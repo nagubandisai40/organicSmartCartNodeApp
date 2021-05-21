@@ -17,11 +17,38 @@ router.post('/addCart',async (req,res)=>{
         productId: req.body.productId,
         
     })
+    // var isAlreadyPresent=1;
+    // console.log("--------------------------------------------------------------------------------------------------------");
+    // await Cart.findOne({"userId":req.body.userId,"productId":req.body.productId},function(err,docs){
+    //     if(err){
+    //         console.log(err);
+            
+            
+    //     }
+    //     else{
+    //         console.log(docs);
+    //         if(docs==null)
+    //         {
+    //         isAlreadyPresent=0;
+    //         console.log("not present"+req.body.productId["productName"]);
+            
+    //         }
+            
+    //     }
+    // });
     
+    //console.log(isAlreadyPresent);
     const result = await cart.save();
-    res.status(200).send({
+     res.status(200).send({
         "_id":result._id
-    })
+     })
+    // if(isAlreadyPresent==0)
+    // {
+    // const result = await cart.save();
+    // res.status(200).send({
+    //     "_id":result._id
+    // })
+    // }
 })
 
 router.post("/cartItems", async (req,res)=>{
@@ -41,7 +68,17 @@ router.post("/cartItems", async (req,res)=>{
 })
 
 router.post("/deleteCartItem",async (req,res)=>{
-    Cart.remove({_id:req.body.prodId});
+    console.log(req.body.prodId);
+    Cart.remove({productId:req.body.prodId},function(err,obj){
+        if(err) {}//throw err;
+        else{
+            res.send("removed")
+        }
+        
+       // console.log(obj)
+        //console.log(obj.result.n + " document(s) deleted");
+    });
+    
 })
 
 
