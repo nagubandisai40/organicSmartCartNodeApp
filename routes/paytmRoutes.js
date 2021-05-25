@@ -69,12 +69,11 @@ router.post('/payment', async (req, res) => {
         phoneNumber: req.body.phone,
         amount: req.body.amount,
     })
-
-
-    try {
-        const savedOrder = await order.save();
-        const orderId = savedOrder._id;
+    await order.save().then(val => {
+        console.log("#################")
+        console.log(val)
         var params = {};
+        const orderId = val._id;
         params['MID'] = config.PaytmConfig.mid;
         params['WEBSITE'] = config.PaytmConfig.website;
         params['CHANNEL_ID'] = 'WEB';
@@ -85,7 +84,7 @@ router.post('/payment', async (req, res) => {
         params['CALLBACK_URL'] = 'http://localhost:3000/api/paytm/callback';
         params['EMAIL'] = req.body.email;
         params['MOBILE_NO'] = req.body.phone.toString();
-
+        console.log(params)
         checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
             console.log(checksum)
             var paytmParams = {
@@ -94,11 +93,34 @@ router.post('/payment', async (req, res) => {
             }
             res.json(paytmParams)
         });
+    });
+    console.log("------------");
+    // const orderId = savedOrder._id;
+    // var params = {};
+    // params['MID'] = config.PaytmConfig.mid;
+    // params['WEBSITE'] = config.PaytmConfig.website;
+    // params['CHANNEL_ID'] = 'WEB';
+    // params['INDUSTRY_TYPE_ID'] = 'Retail';
+    // params['ORDER_ID'] = orderId;
+    // params['CUST_ID'] = 'customer_001';
+    // params['TXN_AMOUNT'] = req.body.amount.toString();
+    // params['CALLBACK_URL'] = 'http://localhost:3000/api/paytm/callback';
+    // params['EMAIL'] = req.body.email;
+    // params['MOBILE_NO'] = req.body.phone.toString();
+    // console.log(params)
+    //  checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
+    //     console.log(checksum)
+    //     var paytmParams = {
+    //         ...params,
+    //         CHECKSUMHASH: checksum
+    //     }
+    //     res.json(paytmParams)
+    // });
 
-    } catch (err) {
-        console.log("/payment failed")
-        res.status(400).send(err)
-    }
+
+    // console.log("/payment failed")
+    // res.status(400).send(err)
+
 
 })
 
@@ -106,7 +128,7 @@ router.get("/test", (req, res) => {
     res.send('<script>window.location.href="http://localhost:4200/";</script>');
 })
 
-router.post('/callback',async (req, res) => {
+router.post('/callback', async (req, res) => {
 
     var body = '';
     req.on('data', function (data) {
@@ -191,12 +213,12 @@ router.post('/callback',async (req, res) => {
         console.log(temp)
         const orderedItem = await PurchasedItems.findById(req.body.ORDERID);
         await orderedItem.update({
-            transactionId:req.body.TXNID,
-            transactionstatus:req.body.STATUS
-        }).exec((err,response)=>{
-            if(err){
+            transactionId: req.body.TXNID,
+            transactionstatus: req.body.STATUS
+        }).exec((err, response) => {
+            if (err) {
                 res.send("Payment Failed")
-            }else{
+            } else {
                 console.log("Done")
                 res.redirect("http://localhost:4200")
             }

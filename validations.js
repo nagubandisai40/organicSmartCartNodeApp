@@ -37,7 +37,7 @@ const cartValidation = (data)=>{
 const productValidation = (data)=>{
     const schema = new Joi.object({
         productName: Joi.string().required(),
-        category: Joi.string().required(),
+        //category: Joi.string().required(),
         description: Joi.string().required(),
         price: Joi.number().required(),
         categoryId: Joi.number().required(),

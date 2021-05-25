@@ -15,7 +15,8 @@ router.post('/saveUserHistory',async (req,res)=>{
     console.log(productId)
     const hist = new history({
         userId:userId,
-        productId:productId
+        productId:productId,
+        
     })
 
     const result = await hist.save()

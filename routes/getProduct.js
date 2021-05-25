@@ -31,15 +31,20 @@ router.get("/getProductsAccToCategoryId", async (req, res) => {
 router.post("/getRecommendedProducts", async (req, res) => {
     var arr = [];
     var allProducts = await product.find();
-
+    var map = new Map(); 
     await history.find().populate('userId').populate('productId').then(data => {
         data.forEach((value) => {
             if (value.userId._id == req.body.userId) {
                 arr.push(value.productId.productName);
+                console.log(typeof(value.date));
+                //map.set((value.date),value.productId.productName)
             }
         })
     })
-
+    arr=arr.slice(Math.max(arr.length - 5, 0))
+    console.log(arr)
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    //console.log(map)
     var temp;
     await axios.post("http://localhost:8000/api/recommend/", {
         "allProducts": allProducts,
