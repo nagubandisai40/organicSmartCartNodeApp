@@ -3,6 +3,7 @@ const router = express.Router()
 const https = require('https')
 const qs = require('querystring')
 // Middleware for body parsing
+const PurchasedItems = require('../models/PurchasedItems')
 const parseUrl = express.urlencoded({
     extended: false
 })
@@ -51,36 +52,62 @@ router.post('/paynow', [parseUrl, parseJson], (req, res) => {
 
 })
 
-router.post('/payment', (req, res) => {
+router.post('/payment', async (req, res) => {
 
-    var params = {};
-    params['MID'] = config.PaytmConfig.mid;
-    params['WEBSITE'] = config.PaytmConfig.website;
-    params['CHANNEL_ID'] = 'WEB';
-    params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = 'TEST_' + new Date().getTime();
-    params['CUST_ID'] = 'customer_001';
-    params['TXN_AMOUNT'] = req.body.amount.toString();
-    params['CALLBACK_URL'] = 'http://localhost:4200/';
-    params['EMAIL'] = req.body.email;
-    params['MOBILE_NO'] = req.body.phone.toString();
+    if (!req.body.amount || !req.body.email || !req.body.phone) {
+        res.status(400).send("Payment Failed")
+    }
 
-    checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
-        console.log(checksum)
-        var paytmParams={
-            ...params,
-            CHECKSUMHASH:checksum
-        }
-        res.json(paytmParams)
-    });
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    console.log(req.body)
+
+    const order = new PurchasedItems({
+        userId: req.body.userId,
+        prodctId: req.body.productId,
+        quantity: req.body.quantity,
+        deliveryAddress: req.body.deliveryAddress,
+        phoneNumber: req.body.phone,
+        amount: req.body.amount,
+    })
 
 
+    try {
+        const savedOrder = await order.save();
+        const orderId = savedOrder._id;
+        var params = {};
+        params['MID'] = config.PaytmConfig.mid;
+        params['WEBSITE'] = config.PaytmConfig.website;
+        params['CHANNEL_ID'] = 'WEB';
+        params['INDUSTRY_TYPE_ID'] = 'Retail';
+        params['ORDER_ID'] = orderId;
+        params['CUST_ID'] = 'customer_001';
+        params['TXN_AMOUNT'] = req.body.amount.toString();
+        params['CALLBACK_URL'] = 'http://localhost:3000/api/paytm/callback';
+        params['EMAIL'] = req.body.email;
+        params['MOBILE_NO'] = req.body.phone.toString();
+
+        checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
+            console.log(checksum)
+            var paytmParams = {
+                ...params,
+                CHECKSUMHASH: checksum
+            }
+            res.json(paytmParams)
+        });
+
+    } catch (err) {
+        console.log("/payment failed")
+        res.status(400).send(err)
+    }
 
 })
 
-router.post('/callback', (req, res) => {
-    console.log("@@@@@@@@@@@@@@@@@@@")
-    console.log(req.body)
+router.get("/test", (req, res) => {
+    res.send('<script>window.location.href="http://localhost:4200/";</script>');
+})
+
+router.post('/callback',async (req, res) => {
+
     var body = '';
     req.on('data', function (data) {
         console.log("Dataaa..........");
@@ -88,7 +115,13 @@ router.post('/callback', (req, res) => {
         body += data;
     });
 
+    req.on('error', (err) => {
+        console.log("@@@@@@@@@@@@@@")
+        console.error(err.stack)
+    })
+
     req.on('end', function () {
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         var html = "";
         var post_data = qs.parse(body);
 
@@ -150,6 +183,27 @@ router.post('/callback', (req, res) => {
             post_req.end();
         });
     });
+
+    console.log(req.body)
+
+    if (req.body.STATUS == "TXN_SUCCESS") {
+        var temp = req.body.ORDERID.split("_")
+        console.log(temp)
+        const orderedItem = await PurchasedItems.findById(req.body.ORDERID);
+        await orderedItem.update({
+            transactionId:req.body.TXNID,
+            transactionstatus:req.body.STATUS
+        }).exec((err,response)=>{
+            if(err){
+                res.send("Payment Failed")
+            }else{
+                console.log("Done")
+                res.redirect("http://localhost:4200")
+            }
+        })
+    } else {
+        console.log("Trasanction status is mismatched")
+    }
 
 })
 

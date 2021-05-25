@@ -8,6 +8,8 @@ const PurchasedItems = mongoose.Schema({
     deliveryAddress: String,
     phoneNumber: String,
     amount: Number,
+    transactionId:String,
+    transactionstatus:String,
     purchasedDate:{type:Date,default:Date.now}
 })
 
