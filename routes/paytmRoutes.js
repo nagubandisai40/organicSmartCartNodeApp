@@ -52,7 +52,7 @@ router.post('/paynow', [parseUrl, parseJson], (req, res) => {
 
 })
 
-router.post('/payment', async (req, res) => {
+router.post('/payment',async (req, res) => {
 
     if (!req.body.amount || !req.body.email || !req.body.phone) {
         res.status(400).send("Payment Failed")
@@ -69,7 +69,8 @@ router.post('/payment', async (req, res) => {
         phoneNumber: req.body.phone,
         amount: req.body.amount,
     })
-    await order.save().then(val => {
+
+     await order.save().then(val => {
         console.log("#################")
         console.log(val)
         var params = {};
@@ -78,19 +79,19 @@ router.post('/payment', async (req, res) => {
         params['WEBSITE'] = config.PaytmConfig.website;
         params['CHANNEL_ID'] = 'WEB';
         params['INDUSTRY_TYPE_ID'] = 'Retail';
-        params['ORDER_ID'] = orderId;
+        params['ORDER_ID'] = orderId.toString();
         params['CUST_ID'] = 'customer_001';
         params['TXN_AMOUNT'] = req.body.amount.toString();
         params['CALLBACK_URL'] = 'http://localhost:3000/api/paytm/callback';
         params['EMAIL'] = req.body.email;
         params['MOBILE_NO'] = req.body.phone.toString();
-        console.log(params)
         checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
             console.log(checksum)
             var paytmParams = {
                 ...params,
                 CHECKSUMHASH: checksum
             }
+            console.log("Sending Response")
             res.json(paytmParams)
         });
     });
@@ -101,7 +102,7 @@ router.post('/payment', async (req, res) => {
     // params['WEBSITE'] = config.PaytmConfig.website;
     // params['CHANNEL_ID'] = 'WEB';
     // params['INDUSTRY_TYPE_ID'] = 'Retail';
-    // params['ORDER_ID'] = orderId;
+    // params['ORDER_ID'] = new Date().toTimeString();
     // params['CUST_ID'] = 'customer_001';
     // params['TXN_AMOUNT'] = req.body.amount.toString();
     // params['CALLBACK_URL'] = 'http://localhost:3000/api/paytm/callback';
