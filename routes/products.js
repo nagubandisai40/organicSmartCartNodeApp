@@ -26,11 +26,6 @@ var upload = multer({
 });
 
 
-// router.get("/", verify, (req, res) => {
-//     res.send({
-//         message: "Hello You are done with the login"
-//     })
-// })
 
 router.post('/addProducts',upload.single('image'), async (req, res) => {
     

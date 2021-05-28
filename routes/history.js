@@ -3,6 +3,8 @@ const router = express.Router()
 const history = require('../models/History')
 const {historyValidation} = require('../validations')
 const fs = require('fs')
+const product = require('../models/Product')
+const PurchasedItems = require('../models/PurchasedItems')
 router.post('/saveUserHistory',async (req,res)=>{
     const {error} = historyValidation(req.body);
 
@@ -62,4 +64,25 @@ router.post('/getHistory1',async (req,res)=>{
 })
 
 
+
+router.post('/yourOrders',async (req,res)=>{
+    
+    var arr = []
+     PurchasedItems.find().populate('userId').populate('productId').exec((err,data)=>{
+        if(err){
+            res.status(400).send(err)
+        }
+        data.forEach((value)=>{  
+           
+            if(value.userId._id == req.body.userId)
+            {   
+                arr.push(value.prodctId);
+            }
+        })
+        product.find({_id:{$in:arr}}).exec((err,data)=>{
+            console.log(data)
+            res.status(200).send({"data":data})
+        })
+    })
+})
 module.exports = router
