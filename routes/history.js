@@ -41,10 +41,7 @@ router.post('/getHistory',async (req,res)=>{
             if(value.userId._id == req.body.userId)
             {
                 arr.push(value.productId);
-                //console.log(value.productId)
             }
-            
-           // console.log(value)
         })
         
         res.status(200).send({"data":arr})
@@ -68,21 +65,20 @@ router.post('/getHistory1',async (req,res)=>{
 router.post('/yourOrders',async (req,res)=>{
     
     var arr = []
-     PurchasedItems.find().populate('userId').populate('productId').exec((err,data)=>{
+     PurchasedItems.find().populate('userId',"userName").populate('prodctId').exec((err,data)=>{
         if(err){
             res.status(400).send(err)
+            console.log("Sending error")
         }
+        // console.log(data)
         data.forEach((value)=>{  
-           
+            // console.log(value)
             if(value.userId._id == req.body.userId)
             {   
-                arr.push(value.prodctId);
+                arr.push(value);
             }
         })
-        product.find({_id:{$in:arr}}).exec((err,data)=>{
-            console.log(data)
-            res.status(200).send({"data":data})
-        })
+        res.send(arr)
     })
 })
 module.exports = router

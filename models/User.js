@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
     firstName: {type:String, required:true},
     lastName: {type:String, required:true},
     city: {type:String, required:true},
-    country: {type:String, required:true}
+    pincode:{type:String,required:true},
+    isAdmin:{type:Boolean,required:true,default:false}
 })
 
 module.exports = mongoose.model('User',userSchema)

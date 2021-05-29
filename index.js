@@ -19,6 +19,7 @@ const paytmRoutes = require('./routes/paytmRoutes')
 const cartRoutes = require('./routes/cartRoutes')
 const historyRoutes = require('./routes/history')
 const getAllProducts=require('./routes/getProduct')
+const userRou = require("./routes/userRoutes")
 
 const PORT = 3000;
 const app = express()
@@ -31,6 +32,7 @@ app.use('/api/paytm',paytmRoutes)
 app.use('/productImages',express.static('routes/productImages'))
 app.use('/api/cart',cartRoutes)
 app.use('/api/history',historyRoutes)
+app.use('/api/adminUsers',userRou)
 app.use('/api/products',getAllProducts)
 
 mongoose.connect(process.env.DB_CONNECT,{ useNewUrlParser: true, useUnifiedTopology: true },err=>{

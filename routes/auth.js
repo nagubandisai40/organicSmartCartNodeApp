@@ -36,7 +36,7 @@ router.post("/register",async (req,res)=>{
         firstName:req.body.firstName,
         lastName:req.body.lastName,
         city:req.body.city,
-        country:req.body.country
+        pincode:req.body.pincode
     })
     try{
         const savedUser = await user.save();
@@ -71,6 +71,21 @@ router.post("/login",async (req,res)=>{
     const token = jwt.sign({_id: emailExists._id},process.env.TOKEN_SECRETE)
 
     res.status(200).send({token:token,_id:emailExists._id,userName:emailExists.userName,email:emailExists.email,phone:emailExists.phone})
+})
+
+
+router.post("/getprofile",async (req,res)=>{
+    
+    userId= req.body.userId;
+    try{
+        user = await User.find({_id:userId},{password:0});
+        console.log("###")
+        console.log(user)
+        res.status(200).send(user);
+    }catch(e){
+        res.status(400).send("Something Went Wrong")
+    }
+    
 })
 
 module.exports = router

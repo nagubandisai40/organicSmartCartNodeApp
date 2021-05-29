@@ -10,8 +10,8 @@ const registerValidation = (data)=>{
         lastName: Joi.string().required().max(30),
         phone: Joi.string().required(),
         city: Joi.string().required(),
-        country: Joi.string().required(),
-        address: Joi.string().required(),
+        pincode: Joi.string().required().min(6).max(6),
+        address: Joi.string().required()
     })    
     return schema.validate(data)
 }
