@@ -8,6 +8,7 @@ const product = require("../models/Product")
 router.get("/getAllUsers",async (req,res)=>{
     try{
         var users = await User.find({},{password:0})
+        //console.log(users)
         res.status(200).send(users)
     }catch(e)
     {
@@ -36,10 +37,11 @@ router.get("/allProducts",async (req,res)=>{
     }
 })
 
-router.get("/udateIsAvailale",async (req,res)=>{
+router.post("/udateIsAvailale",async (req,res)=>{
+    console.log("in update")
     var productId = req.body.productId;
     var isAvailable = req.body.isAvailable
-
+    //console.log("in update")
     await product.findOne({_id:productId}).update({})
     await product.updateOne({_id:productId},{
         $set:{
@@ -60,6 +62,7 @@ router.get("/udateIsAvailale",async (req,res)=>{
 router.post("/updatePrice",async (req,res)=>{
     var productId = req.body.productId
     var amount= req.body.amount
+    console.log("be update price")
     await product.updateOne({_id:productId},{$set:{price:amount}},(err,data)=>{
         if(err)
         {

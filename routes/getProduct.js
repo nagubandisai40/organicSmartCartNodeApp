@@ -30,10 +30,12 @@ router.get("/getProductsAccToCategoryId", async (req, res) => {
 
 router.post("/getRecommendedProducts", async (req, res) => {
     var arr = [];
+    console.log(req.body)
     var allProducts = await product.find();
     var map = new Map(); 
     await history.find().populate('userId').populate('productId').then(data => {
         data.forEach((value) => {
+            console.log(value)
             if (value.userId._id == req.body.userId) {
                 arr.push(value.productId.productName);
                 console.log(typeof(value.date));
